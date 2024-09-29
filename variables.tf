@@ -1,7 +1,7 @@
 variable "bucket_name" {
   description = "The name of the S3 bucket for Terraform state"
   type        = string
-  default     = "mycomponents-tfstate-rs-aws"
+  default     = "mycomponents-tfstate-rs"
 }
 
 variable "region" {
