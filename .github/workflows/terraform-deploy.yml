@@ -1,33 +1,79 @@
 name: CI/CD Pipeline
 
-permissions:
-  id-token: write
-  contents: read
-
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
-      - main
+      - main  # Change this to your default branch if different
+  push:
+    branches:
+      - main  # Change this to your default branch if different
 
 jobs:
   terraform-check:
     runs-on: ubuntu-latest
-    name: Terraform check
+    name: Terraform Check
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-            audience: sts.amazonaws.com
-            aws-region: ap-south-1
-            role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
+          audience: sts.amazonaws.com
+          aws-region: ap-south-1
+          role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
+
+      - name: Terraform format check
+        run: terraform fmt -check
+
+  terraform-plan:
+    runs-on: ubuntu-latest
+    name: Terraform Plan
+    needs: terraform-check  # Ensure check job runs before plan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
-      - name: Terraform init shared states
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          aws-region: ap-south-1
+          role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
+
+      - name: Terraform init
         run: terraform init
-      - name: Terraform plan shared states
+
+      - name: Terraform plan
         run: terraform plan
+
+  terraform-apply:
+    runs-on: ubuntu-latest
+    name: Terraform Apply
+    needs: terraform-plan  # Ensure plan job runs before apply
+    if: github.ref == 'refs/heads/main'  # Only run on push to main
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          aws-region: ap-south-1
+          role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve  # Automatically approve the plan
