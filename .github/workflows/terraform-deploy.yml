@@ -24,7 +24,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          aws-region: eu-central-1
+          aws-region: ap-south-1
           role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
 
       - name: Set up Terraform
@@ -52,7 +52,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           audience: sts.amazonaws.com
-          aws-region: eu-central-1
+          aws-region: ap-south-1
           role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
 
       - name: Set up Terraform
