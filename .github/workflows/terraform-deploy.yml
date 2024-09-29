@@ -19,47 +19,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          audience: sts.amazonaws.com
-          aws-region: ap-south-1
-          role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
-
+            audience: sts.amazonaws.com
+            aws-region: ap-south-1
+            role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
-
       - name: Terraform init shared states
         run: terraform init
-
       - name: Terraform plan shared states
-        id: plan
-        run: |
-          terraform plan -out=tfplan
-          terraform show -json tfplan > plan.json
-          echo "::set-output name=plan_output::$(cat plan.json)"
-
-  terraform-apply:
-    runs-on: ubuntu-latest
-    needs: terraform-check
-    name: Terraform apply
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          audience: sts.amazonaws.com
-          aws-region: ap-south-1
-          role-to-assume: arn:aws:iam::427059129602:role/GithubActionsRole
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform init shared states
-        run: terraform init
-
-      - name: Terraform apply shared states
-        run: terraform apply -auto-approve tfplan
+        run: terraform plan
