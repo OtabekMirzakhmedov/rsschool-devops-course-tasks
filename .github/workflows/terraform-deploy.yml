@@ -41,9 +41,9 @@ jobs:
       - name: Check AWS Credentials
         run: aws sts get-caller-identity
         env:  # Set environment variables for AWS credentials
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
+          AWS_ACCESS_KEY_ID: "AKIAWG3VVFUBDXLBYA7F"
+          AWS_SECRET_ACCESS_KEY: "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"
+          
       - name: Terraform Plan
         run: terraform plan
         env:
